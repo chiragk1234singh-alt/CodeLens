@@ -1,14 +1,15 @@
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y git
 
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "start.py"]
+EXPOSE 8000
+
+ENTRYPOINT sh -c 'uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}'
