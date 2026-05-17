@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- This line makes it look right on phones -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLens</title>
+    
+    <!-- Your stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+    
+    <!-- marked.js: converts markdown text into HTML (for reports and answers) -->
+    <!-- loaded from a CDN so you don't need to install anything -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- highlight.js: syntax highlighting for code blocks in responses -->
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCREEN 1: LANDING
+         Shown when the user first opens the app, or after deleting a repo.
+         Hidden by adding class "hidden" via JavaScript.
+    ════════════════════════════════════════════════════════════════════ -->
+    <div id="screen-landing" class="screen">
+        
+        <div class="landing-container">
+            
+            <!-- Logo and tagline -->
+            <div class="landing-header">
+                <div class="logo">
+                    <span class="logo-icon">⬡</span>
+                    <span class="logo-text">CodeLens</span>
+                </div>
+                <p class="tagline">Understand any GitHub codebase in plain English.</p>
+            </div>
+            
+            <!-- URL input form -->
+            <div class="landing-card">
+                <label class="input-label" for="repo-url">
+                    GitHub Repository URL
+                </label>
+                <div class="input-row">
+                    <!-- The text input where user pastes the URL -->
+                    <input 
+                        type="text" 
+                        id="repo-url" 
+                        class="url-input"
+                        placeholder="https://github.com/owner/repository"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <!-- The submit button -->
+                    <button id="analyze-btn" class="btn btn-primary">
+                        Analyze
+                    </button>
+                </div>
+                <!-- Error message shown below input when URL is invalid -->
+                <p id="url-error" class="error-text hidden"></p>
+            </div>
+            
+            <!-- Previously analyzed repos — populated by JavaScript -->
+            <div id="previous-repos-section" class="previous-repos hidden">
+                <h3 class="section-title">Previously analyzed</h3>
+                <!-- JavaScript will inject repo cards here -->
+                <div id="previous-repos-list"></div>
+            </div>
+            
+        </div>
+        
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCREEN 2: INDEXING
+         Shown while the repo is being cloned, chunked, and embedded.
+         Has a progress bar and status message that update every 2 seconds.
+    ════════════════════════════════════════════════════════════════════ -->
+    <div id="screen-indexing" class="screen hidden">
+        
+        <div class="indexing-container">
+            
+            <div class="indexing-header">
+                <span class="spinner"></span>
+                <h2 id="indexing-title">Analyzing repository...</h2>
+            </div>
+            
+            <!-- The repo URL being indexed -->
+            <p id="indexing-repo-url" class="indexing-url"></p>
+            
+            <!-- Progress bar -->
+            <div class="progress-bar-track">
+                <!-- Width of this div is updated by JavaScript (0% to 100%) -->
+                <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+            
+            <!-- Stats line: "187 / 280 chunks" -->
+            <p id="indexing-stats" class="indexing-stats">Starting...</p>
+            
+            <!-- Current file being processed -->
+            <p id="indexing-current-file" class="indexing-current-file"></p>
+            
+        </div>
+        
+    </div>  
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCREEN 3: CHAT
+         The main interface after a repo is indexed.
+         Split into left sidebar and right chat area.
+    ════════════════════════════════════════════════════════════════════ -->
+    <div id="screen-chat" class="screen hidden">
+        
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+            
+            <!-- Repo info at the top of sidebar -->
+            <div class="sidebar-section">
+                <div class="repo-badge">
+                    <span class="repo-icon">◈</span>
+                    <div>
+                        <!-- These are filled in by JavaScript -->
+                        <div id="sidebar-repo-name" class="repo-name"></div>
+                        <div id="sidebar-repo-stats" class="repo-stats"></div>
+                    </div>
+                </div>
+                <!-- Button to go back and analyze a different repo -->
+                <div style="display:flex; gap:8px;">
+    <button id="new-repo-btn" class="btn btn-ghost btn-sm">
+        ← New repo
+    </button>
+    <button id="delete-repo-btn" class="btn btn-ghost btn-sm" 
+            style="color: var(--danger); border-color: var(--danger);">
+        Delete
+    </button>
+</div>
+            </div>
+            
+            <!-- Mode selector: Chat / Review / Report -->
+            <div class="sidebar-section">
+                <p class="sidebar-label">Mode</p>
+                <div class="mode-tabs">
+                    <!-- data-mode tells JavaScript which mode each button is -->
+                    <button class="mode-tab active" data-mode="chat">Chat</button>
+                    <button class="mode-tab" data-mode="review">Review</button>
+                    <button class="mode-tab" data-mode="report">Report</button>
+                </div>
+            </div>
+            
+            <!-- File picker — only visible in Review mode -->
+            <div id="file-picker-section" class="sidebar-section hidden">
+                <p class="sidebar-label">Select file to review</p>
+                <!-- Populated by JavaScript when review mode is selected -->
+                <select id="file-picker" class="file-select">
+                    <option value="">Loading files...</option>
+                </select>
+            </div>
+            
+            <!-- Suggested questions — shown in chat mode -->
+             <div id="suggestions-section" class="sidebar-section">
+                <p class="sidebar-label">Try asking</p>
+
+                <div class="suggestions">
+
+                   <button class="suggestion-chip" 
+                            data-query="What does this project do?">
+                        What does this project do?
+                    </button>
+                    <button class="suggestion-chip" 
+                            data-query="How is authentication handled?">
+                        How is auth handled?
+                    </button>
+                    <button class="suggestion-chip" 
+                            data-query="What are the main entry points?">
+                        What are the entry points?
+                    </button>
+                    <button class="suggestion-chip" 
+                            data-query="What are potential issues or bugs?">
+                        Any potential bugs?
+                    </button>
+
+                </div>
+            </div>
+            </aside>
+
+            <!-- Report controls -->
+           <div id="report-controls"
+     class="sidebar-section hidden">
+
+    <button id="generate-report-btn"
+            class="btn btn-primary"
+            style="width:100%;">
+        Generate Repository Report
+    </button>
+
+</div>
+
+</aside>
+            
+       
+        
+        <!-- RIGHT CHAT AREA -->
+        <main class="chat-area">
+            
+            <!-- Messages appear here, scrollable -->
+            <div id="chat-messages" class="chat-messages">
+                <!-- Welcome message, shown before first question -->
+                <div id="welcome-message" class="welcome-message">
+                    <h2>Ready to explore</h2>
+                    <p>Ask anything about this codebase, or pick a suggestion on the left.</p>
+                </div>
+                <!-- JavaScript inserts message divs here dynamically -->
+            </div>
+            
+            <!-- Input bar at the bottom -->
+            <div id="chat-input-bar" class="chat-input-bar">
+                <textarea 
+                    id="chat-input" 
+                    class="chat-textarea"
+                    placeholder="Ask about this codebase..."
+                    rows="1"
+                ></textarea>
+                <button id="send-btn" class="btn btn-primary send-btn">
+                    <!-- Arrow icon -->
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1L15 8L8 15M15 8H1"/>
+                    </svg>
+                </button>
+            </div>
+            
+        </main>
+        
+    </div>
+
+
+    <!-- Your JavaScript — loaded at the end so HTML is ready when it runs -->
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+    <script src="/static/app.js"></script>
+
+
+</body>
+</html>

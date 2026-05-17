@@ -1,0 +1,86 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+import os
+from backend.core.db import init_db, update_repo_status
+from backend.core.db import (
+    init_db,
+    create_repo,
+    get_repo,
+    get_all_repos,
+)
+from backend.indexer.cloner import (
+    parse_github_url,
+    clone_repo,
+    get_python_files,
+)
+
+from backend.core.config import settings
+
+# Create the FastAPI app
+app = FastAPI(title="CodeLens", version="1.0")
+
+# Make sure storage folders exist when the server starts
+# os.makedirs creates the folder AND all parent folders if they don't exist
+# exist_ok=True means "don't crash if the folder already exists"
+@app.on_event("startup")
+async def startup():
+    os.makedirs(settings.repo_storage_path, exist_ok=True)
+    os.makedirs(settings.chroma_persist_path, exist_ok=True)
+    os.makedirs(os.path.dirname(settings.sqlite_db_path), exist_ok=True)
+    await init_db()
+    print("CodeLens started.")
+    print(f"Repos will be stored at: {settings.repo_storage_path}")
+
+# A test route so you can confirm the server is working
+@app.get("/health")
+async def health():
+    return {"status": "ok", "message": "CodeLens is running"}
+
+@app.post("/test-db")
+async def test_db():
+    repo = await create_repo(
+        url="https://github.com/test/repo",
+        owner="test",
+        name="repo"
+    )
+
+    return repo
+
+@app.get("/repos")
+async def repos():
+    return await get_all_repos()
+
+@app.post("/test-clone")
+async def test_clone():
+
+    repo_url = "https://github.com/tiangolo/fastapi"
+
+    owner, name = parse_github_url(repo_url)
+
+    repo = await create_repo(
+        url=repo_url,
+        owner=owner,
+        name=name,
+    )
+
+    local_path = clone_repo(
+        repo_id=repo["id"],
+        url=repo_url,
+    )
+
+    python_files = get_python_files(
+        local_path=local_path,
+        max_files=20,
+    )
+    await update_repo_status(
+    repo_id=repo["id"],
+    status="ready",
+    file_count=len(python_files),
+)
+
+    return {
+        "repo": repo,
+        "local_path": local_path,
+        "python_files_found": len(python_files),
+        "sample_files": python_files[:5],
+    }   
