@@ -3,7 +3,7 @@ import os
 
 class Settings(BaseSettings):
     
-    groq_api_key: str = os.getenv("GROQ_API_KEY")
+    groq_api_key: str = os.getenv("groq_api_key")
     repo_storage_path: str = "/tmp/codelens/repos"
     chroma_persist_path: str = "/tmp/codelens/chroma"
     sqlite_db_path: str = "/tmp/codelens/jobs.db"
