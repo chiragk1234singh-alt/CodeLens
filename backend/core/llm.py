@@ -3,7 +3,7 @@ from backend.core.config import settings
 
 # NVIDIA's API is OpenAI-compatible — same SDK, different base_url and key
 # If NVIDIA key exists and has credits, use it. Otherwise fall back to Groq.
-USE_NVIDIA = bool(settings.nvidia_api_key)
+USE_NVIDIA = settings.llm_provider.lower() == "nvidia"
 
 if USE_NVIDIA:
     from openai import OpenAI

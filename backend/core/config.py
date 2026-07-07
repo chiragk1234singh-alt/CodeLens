@@ -5,6 +5,8 @@ class Settings(BaseSettings):
     
     groq_api_key: str = os.getenv("groq_api_key")
     nvidia_api_key:  str = os.getenv("NVIDIA_API_KEY")
+    llm_provider: str = "nvidia"
+    llm_model: str = "z-ai/glm-5.2"
     repo_storage_path: str = "/tmp/codelens/repos"
     chroma_persist_path: str = "/tmp/codelens/chroma"
     sqlite_db_path: str = "/tmp/codelens/jobs.db"
