@@ -11,7 +11,7 @@ if USE_NVIDIA:
         base_url="https://integrate.api.nvidia.com/v1",
         api_key=settings.nvidia_api_key,
     )
-    MODEL = "nvidia/llama-3.1-nemotron-70b-instruct"
+    MODEL = settings.llm_model
     print(f"[llm] using NVIDIA: {MODEL}")
 else:
     from groq import Groq
@@ -21,10 +21,6 @@ else:
 
 
 def call_llm(system_prompt: str, user_prompt: str, json_mode: bool = False) -> str:
-    """
-    Single function for all LLM calls. Works with both NVIDIA and Groq.
-    The API shape is identical — only the client and model name differ.
-    """
     kwargs = {
         "model":    MODEL,
         "messages": [
@@ -38,5 +34,21 @@ def call_llm(system_prompt: str, user_prompt: str, json_mode: bool = False) -> s
     if json_mode:
         kwargs["response_format"] = {"type": "json_object"}
 
-    response = _client.chat.completions.create(**kwargs)
-    return response.choices[0].message.content.strip()
+    try:
+        response = _client.chat.completions.create(**kwargs)
+        return response.choices[0].message.content.strip()
+
+    except Exception as e:
+        # If NVIDIA fails for any reason, fall back to Groq
+        if USE_NVIDIA:
+            print(f"[llm] NVIDIA failed ({e}), falling back to Groq")
+            from groq import Groq
+            groq_client = Groq(api_key=settings.groq_api_key)
+            fallback = groq_client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=kwargs["messages"],
+                temperature=0.1,
+                max_tokens=2048,
+            )
+            return fallback.choices[0].message.content.strip()
+        raise
