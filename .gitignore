@@ -1,9 +1,39 @@
+# Python
 venv/
+.venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+
+# Environment
 .env
-tmp/
-chroma/
-*.sqlite
+.env.*
+
+# Databases
 *.db
+*.sqlite
+*.sqlite3
+
+# Chroma
+chroma/
+
+# Logs
+*.log
+logs/
+
+# Temporary
+tmp/
+temp/
+
+# IDE
+.vscode/
+.idea/
+
+# Frontend
+node_modules/
+dist/
+build/
+
+# OS
 .DS_Store
+Thumbs.db
