@@ -1,4 +1,10 @@
 import os
+import os
+
+print("=" * 70)
+print("LOADED LLM FROM:")
+print(os.path.abspath(__file__))
+print("=" * 70)
 from backend.core.config import settings
 
 # NVIDIA's API is OpenAI-compatible — same SDK, different base_url and key
@@ -21,6 +27,7 @@ else:
 
 
 def call_llm(system_prompt: str, user_prompt: str, json_mode: bool = False) -> str:
+    print(">>>>>>>>>>>> ENTERED call_llm <<<<<<<<<<<<", flush=True)
     kwargs = {
         "model":    MODEL,
         "messages": [
