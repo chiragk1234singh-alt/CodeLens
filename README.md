@@ -51,7 +51,7 @@ The problem it addresses is straightforward: reading an unfamiliar codebase requ
 
 ## Report Mode
 
-![Report](assets/report.png)
+![Report](assets/Report.png)
 
 
 # Architecture
