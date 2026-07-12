@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.png" width="100%" alt="CodeLens Hero">
+  <img src="assets/Hero.png" width="800" alt="CodeLens Hero">
 </p>
 <h1 align="center">CodeLens</h1>
 
@@ -55,34 +55,35 @@ The problem it addresses is straightforward: reading an unfamiliar codebase requ
 
 
 # Architecture
+<h3 align="left"> Request Flow - Indexing  </h3>
+<p align="left">
+ When a repository URL is submitted, a FastAPI background task runs the following pipeline without blocking the event loop:
+</p>
+
 
 <p align="center">
-<img src="assets/architecture.png" width="95%">
+<img src="assets/indexingarc2.drawio.svg" width="500">
 </p>
-<p align="left">
+
+
   All three blocking operations — cloning, filesystem traversal, and embedding — run in asyncio.to_thread. Progress callbacks from inside the embed thread reach the async DB writer via asyncio.run_coroutine_threadsafe, which is the only safe way to schedule a coroutine from a non-async context.
 </p>
 
-<h3 align="left"> Request Flow </h3>
-
-<p align="left">
-<img src="assets/indexingarc2.drawio.svg" width="200">
-</p>
-<h3 align="center"> Mermaid </h3>
-
+<h3 align="left"> Request Flow - Query</h3>
 <p align="center">
-<img src="assets/architecture.png" width="95%">
+<img src="assets/queryar.drawio.svg" width="500">
 </p>
-<h3 align="center">Hybrid Retrieval</h3>
 
+<h3 align="left"> Mermaid </h3>
 <p align="center">
-<img src="assets/architecture.png" width="95%">
+<img src="assets/merm.svg" width="700">
 </p>
+
 
 # Repository Structure
 
 <p align="center">
-<img src="assets/architecture.png" width="95%">
+<img src="assets/struct.svg" width="500">
 </p>
 
 # Installation
