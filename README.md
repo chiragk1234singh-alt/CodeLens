@@ -1,13 +1,14 @@
 <p align="center">
-  <img src="assets/Hero.png" width="800" alt="CodeLens Hero">
+  <img src="assets/hero.svg" width="100%" alt="CodeLens Hero">
 </p>
-<h1 align="center">CodeLens</h1>
 
-<p align="center">
+# CodeLens
+
+<p align="Left">
 Query any public GitHub repository in plain English — ask questions, review files, or generate an architecture report.
 </p>
 
-<p align="justify">
+<p align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.110-green)
@@ -187,10 +188,10 @@ The repos table has low write concurrency (one background task at a time) and si
 **Railway over Render or Fly.io**
 Railway's automatic deploys from GitHub, environment variable management, and Dockerfile support required no additional configuration files. The free tier is sufficient for a portfolio project with light usage.
 
-**sentence-transformers over the OpenAI embedding API**
+**Sentence-transformers over the OpenAI embedding API**
 Running the embedding model locally eliminates an API dependency and latency on every indexing operation. all-MiniLM-L6-v2 is 80 MB and runs on CPU in under a second per batch. The quality difference versus text-embedding-3-small is marginal for code retrieval tasks.
 
-**rank-bm25 over Elasticsearch or Typesense**
+**Rank-bm25 over Elasticsearch or Typesense**
 The BM25 implementation from rank-bm25 is a single Python class. It operates on in-memory lists and returns scores synchronously. Adding a dedicated search engine for keyword matching would introduce the same infrastructure overhead that ChromaDB was chosen to avoid.
 
 # Challenges
