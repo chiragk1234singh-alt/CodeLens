@@ -83,8 +83,8 @@ The problem it addresses is straightforward: reading an unfamiliar codebase requ
 
 # Repository Structure
 
-<p align="center">
-<img src="assets/struct.svg" width="500">
+<p align="left">
+<img src="assets/struct.svg" width="800">
 </p>
 
 # Installation
@@ -227,8 +227,8 @@ ChromaDB collection names must be 3–63 characters and match [a-zA-Z0-9_-]+. UU
 
 # Tech Stack
 
-<p align="center">
-<img src="assets/architecture.png" width="95%">
+<p align="left">
+<img src="assets/tech.svg" width="800">
 </p>
 
 # Contributing
