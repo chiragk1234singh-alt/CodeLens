@@ -1278,12 +1278,7 @@ async function generateReport() {
 
     try {
 
-       const data = await apiPost(
-    '/api/report',
-    {
-        repo_id: State.repoId
-    }
-);
+      const data = await apiGet(`/api/report/${State.repoId}`);
 
         document.getElementById('report-loading')?.remove();
 

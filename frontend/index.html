@@ -116,88 +116,86 @@
     <div id="screen-chat" class="screen hidden">
         
         <!-- LEFT SIDEBAR -->
-        <aside class="sidebar">
-            
-            <!-- Repo info at the top of sidebar -->
-            <div class="sidebar-section">
-                <div class="repo-badge">
-                    <span class="repo-icon">◈</span>
-                    <div>
-                        <!-- These are filled in by JavaScript -->
-                        <div id="sidebar-repo-name" class="repo-name"></div>
-                        <div id="sidebar-repo-stats" class="repo-stats"></div>
-                    </div>
-                </div>
-                <!-- Button to go back and analyze a different repo -->
-                <div style="display:flex; gap:8px;">
-    <button id="new-repo-btn" class="btn btn-ghost btn-sm">
-        ← New repo
-    </button>
-    <button id="delete-repo-btn" class="btn btn-ghost btn-sm" 
-            style="color: var(--danger); border-color: var(--danger);">
-        Delete
-    </button>
-</div>
+       <aside class="sidebar">
+
+    <!-- 1. Repo info + buttons -->
+    <div class="sidebar-section">
+        <div class="repo-badge">
+            <span class="repo-icon">◈</span>
+            <div>
+                <div id="sidebar-repo-name" class="repo-name"></div>
+                <div id="sidebar-repo-stats" class="repo-stats"></div>
             </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <button id="new-repo-btn" class="btn btn-ghost btn-sm">
+                ← New repo
+            </button>
+            <button id="delete-repo-btn" class="btn btn-ghost btn-sm"
+                    style="color: var(--danger); border-color: var(--danger);">
+                Delete
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Mode tabs -->
+    <div class="sidebar-section">
+        <p class="sidebar-label">Mode</p>
+        <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="chat">Chat</button>
+            <button class="mode-tab" data-mode="review">Review</button>
+            <button class="mode-tab" data-mode="report">Report</button>
+        </div>
+    </div>
+
+    <!-- 3. Report controls — hidden by default, shown only in report mode -->
+    <div id="report-controls" class="sidebar-section hidden">
+        <button id="generate-report-btn" class="btn btn-primary"
+                style="width: 100%; text-align: center;">
+            Generate Repository Report
+        </button>
+        <p style="
+            font-size: 11px;
+            color: var(--text-secondary);
             
-            <!-- Mode selector: Chat / Review / Report -->
-            <div class="sidebar-section">
-                <p class="sidebar-label">Mode</p>
-                <div class="mode-tabs">
-                    <!-- data-mode tells JavaScript which mode each button is -->
-                    <button class="mode-tab active" data-mode="chat">Chat</button>
-                    <button class="mode-tab" data-mode="review">Review</button>
-                    <button class="mode-tab" data-mode="report">Report</button>
-                </div>
-            </div>
-            
-            <!-- File picker — only visible in Review mode -->
-            <div id="file-picker-section" class="sidebar-section hidden">
-                <p class="sidebar-label">Select file to review</p>
-                <!-- Populated by JavaScript when review mode is selected -->
-                <select id="file-picker" class="file-select">
-                    <option value="">Loading files...</option>
-                </select>
-            </div>
-            
-            <!-- Suggested questions — shown in chat mode -->
-             <div id="suggestions-section" class="sidebar-section">
-                <p class="sidebar-label">Try asking</p>
+            line-height: 1.5;
+            margin-top: 4px;
+        ">
+            Full architecture walkthrough.
+            Takes a few minutes.
+        </p>
+    </div>
 
-                <div class="suggestions">
+    <!-- 4. File picker — hidden by default, shown only in review mode -->
+    <div id="file-picker-section" class="sidebar-section hidden">
+        <p class="sidebar-label">Select file to review</p>
+        <select id="file-picker" class="file-select">
+            <option value="">Loading files...</option>
+        </select>
+    </div>
 
-                   <button class="suggestion-chip" 
-                            data-query="What does this project do?">
-                        What does this project do?
-                    </button>
-                    <button class="suggestion-chip" 
-                            data-query="How is authentication handled?">
-                        How is auth handled?
-                    </button>
-                    <button class="suggestion-chip" 
-                            data-query="What are the main entry points?">
-                        What are the entry points?
-                    </button>
-                    <button class="suggestion-chip" 
-                            data-query="What are potential issues or bugs?">
-                        Any potential bugs?
-                    </button>
-
-                </div>
-            </div>
-            </aside>
-
-            <!-- Report controls -->
-           <div id="report-controls"
-     class="sidebar-section hidden">
-
-    <button id="generate-report-btn"
-            class="btn btn-primary"
-            style="width:100%;">
-        Generate Repository Report
-    </button>
-
-</div>
+    <!-- 5. Suggestions — shown in chat mode -->
+    <div id="suggestions-section" class="sidebar-section">
+        <p class="sidebar-label">Try asking</p>
+        <div class="suggestions">
+            <button class="suggestion-chip"
+                    data-query="What does this project do?">
+                What does this project do?
+            </button>
+            <button class="suggestion-chip"
+                    data-query="How is authentication handled?">
+                How is auth handled?
+            </button>
+            <button class="suggestion-chip"
+                    data-query="What are the main entry points?">
+                What are the entry points?
+            </button>
+            <button class="suggestion-chip"
+                    data-query="What are potential issues or bugs?">
+                Any potential bugs?
+            </button>
+        </div>
+    </div>
 
 </aside>
             
