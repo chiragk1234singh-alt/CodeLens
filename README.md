@@ -22,7 +22,8 @@ Query any public GitHub repository in plain English — ask questions, review fi
 <a href="YOUR_RAILWAY_LINK">
 Live Demo
 </a>
-
+<br>
+Deployment is temporarily unavailable due to free-tier hosting limitations.
 </p>
 
 # Overview
