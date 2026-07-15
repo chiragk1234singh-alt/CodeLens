@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     nvidia_api_key:  str = os.getenv("NVIDIA_API_KEY")
     llm_provider: str = "nvidia"
     llm_model: str = "deepseek-ai/deepseek-v4-flash"
-   repo_storage_path: str = os.getenv(
+    repo_storage_path: str = os.getenv(
     "repo_storage_path",
     "/tmp/codelens/repos"
 )
