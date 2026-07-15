@@ -4,7 +4,17 @@ from backend.core.vector_store import get_collection
 # Load the embedding model once when this module is imported
 # all-MiniLM-L6-v2 is ~80MB, runs on CPU, good quality
 # This download happens the first time — after that it's cached locally
-_model = SentenceTransformer("all-MiniLM-L6-v2")
+_model = None
+
+def get_model():
+    global _model
+
+    if _model is None:
+        print("[Embedding] Loading all-MiniLM-L6-v2...")
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+        print("[Embedding] Model loaded.")
+
+    return _model
 
 
 def embed_chunks(
@@ -43,7 +53,8 @@ def embed_chunks(
         ]
 
         # Generate embeddings
-        embeddings = _model.encode(
+        model = get_model()
+        embeddings = model.encode(
             texts,
             normalize_embeddings=True,
             show_progress_bar=False
