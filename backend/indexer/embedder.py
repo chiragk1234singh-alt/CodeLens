@@ -1,4 +1,4 @@
-from sentence_transformers import SentenceTransformer
+
 from backend.core.vector_store import get_collection
 
 # Load the embedding model once when this module is imported
@@ -10,6 +10,7 @@ def get_model():
     global _model
 
     if _model is None:
+        from sentence_transformers import SentenceTransformer
         print("[Embedding] Loading all-MiniLM-L6-v2...")
         _model = SentenceTransformer("all-MiniLM-L6-v2")
         print("[Embedding] Model loaded.")
