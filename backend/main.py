@@ -10,7 +10,7 @@ from backend.core.config import settings
 from backend.core.db import init_db, create_repo, get_repo, update_repo_status, get_all_repos, delete_repo_db
 from backend.indexer.cloner import parse_github_url, clone_repo, get_python_files
 from backend.indexer.chunker import chunk_repo
-from backend.indexer.embedder import embed_chunks
+
 from backend.core.vector_store import delete_collection
 
 from backend.agents.query_analyzer import analyze_query
@@ -50,6 +50,7 @@ class RepoSubmit(BaseModel):
 
 # ── Background task — the real work ───────────────────────────
 async def run_indexing(repo_id: str, url: str):
+    from backend.indexer.embedder import embed_chunks
 
     local_path = None
 
@@ -150,6 +151,7 @@ async def run_indexing(repo_id: str, url: str):
             future.result()
 
         print(f"[indexer] embedding {len(chunks)} chunks...")
+        from backend.indexer.embedder import embed_chunks
 
         stored = await asyncio.to_thread(
             embed_chunks,
